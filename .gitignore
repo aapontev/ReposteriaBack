@@ -1,0 +1,17 @@
+# Archivos de Build de Maven/Gradle
+/target/
+/build/
+*.jar
+*.war
+
+# Logs
+*.log
+
+# Archivos del IDE (Eclipse/STS)
+.settings/
+.classpath
+.project
+
+# Archivos de OS
+.DS_Store
+Thumbs.db
