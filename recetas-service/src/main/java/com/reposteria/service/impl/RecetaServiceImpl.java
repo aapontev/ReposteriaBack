@@ -5,13 +5,9 @@ import com.reposteria.common.model.Producto;
 import com.reposteria.common.model.Receta;
 import com.reposteria.common.model.RecetaIngrediente;
 import com.reposteria.common.model.RecetaPaso;
-//import com.reposteria.common.model.RecetaIngrediente;
-//import com.reposteria.common.model.RecetaPaso;
-import com.reposteria.repository.IngredienteRepository;
-import com.reposteria.repository.ProductoRepository;
-//import com.reposteria.repository.RecetaIngredienteRepository;
-//import com.reposteria.repository.RecetaPasoRepository;
 import com.reposteria.repository.RecetaRepository;
+import com.reposteria.service.IngredienteFeingClient;
+import com.reposteria.service.ProductoFeignClient;
 import com.reposteria.service.RecetaService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,18 +19,11 @@ public class RecetaServiceImpl implements RecetaService {
 	@Autowired
 	private RecetaRepository recetaRepository;
 	
-	//@Autowired
-	//private RecetaPasoRepository pasoRepository;
-	
-	//@Autowired
-	//private RecetaIngredienteRepository recetaIngredienteRepository;
+	@Autowired
+	private IngredienteFeingClient ingredienteFeingClient;
 	
 	@Autowired
-	private IngredienteRepository ingredienteRepository;
-	
-	@Autowired
-	private ProductoRepository productoRepository;
-	
+    private ProductoFeignClient productoFeignClient;
 
 	@Override
     public List<Receta> listarRecetas() {
@@ -52,8 +41,7 @@ public class RecetaServiceImpl implements RecetaService {
     public Receta crearReceta(Receta receta) {
         // Verificar producto asociado
         if (receta.getProducto() != null && receta.getProducto().getIdProducto() != null) {
-            Producto producto = productoRepository.findById(receta.getProducto().getIdProducto())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+            Producto producto = productoFeignClient.obtenerProductoPorId(receta.getProducto().getIdProducto());
             receta.setProducto(producto);
         }
 
@@ -65,8 +53,7 @@ public class RecetaServiceImpl implements RecetaService {
             receta.getIngredientes().forEach(ri -> {
                 ri.setReceta(receta);
                 if (ri.getIngrediente() != null && ri.getIngrediente().getIdIngrediente() != null) {
-                    Ingrediente ing = ingredienteRepository.findById(ri.getIngrediente().getIdIngrediente())
-                            .orElseThrow(() -> new RuntimeException("Ingrediente no encontrado"));
+                    Ingrediente ing = ingredienteFeingClient.obtenerIngredientePorId(ri.getIngrediente().getIdIngrediente());
                     ri.setIngrediente(ing);
                 }
             });
@@ -88,8 +75,7 @@ public class RecetaServiceImpl implements RecetaService {
 
         // 3. Actualizar la relación @ManyToOne (Producto)
         if (datos.getProducto() != null && datos.getProducto().getIdProducto() != null) {
-            Producto productoManaged = productoRepository.findById(datos.getProducto().getIdProducto())
-                    .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+            Producto productoManaged = productoFeignClient.obtenerProductoPorId(datos.getProducto().getIdProducto());
             existente.setProducto(productoManaged);
         } else {
             existente.setProducto(null);
@@ -117,8 +103,7 @@ public class RecetaServiceImpl implements RecetaService {
                 // --- ESTA ES LA CORRECCIÓN ---
                 // Ahora tratamos 'ri.getIngrediente()' como un solo objeto
                 if (ri.getIngrediente() != null && ri.getIngrediente().getIdIngrediente() != null) {
-                    Ingrediente ingManaged = ingredienteRepository.findById(ri.getIngrediente().getIdIngrediente())
-                            .orElseThrow(() -> new RuntimeException("Ingrediente no encontrado"));
+                    Ingrediente ingManaged = ingredienteFeingClient.obtenerIngredientePorId(ri.getIngrediente().getIdIngrediente());
                     
                     // Simplemente seteamos el ingrediente manejado (no una lista)
                     ri.setIngrediente(ingManaged);

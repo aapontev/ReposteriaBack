@@ -21,19 +21,8 @@ public class Producto {
 	
 	private String descripcion;
 	
-	//@OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
-    //private List<Receta> recetas;
-
 	@Column(name = "imagen_url")
 	private String imagenUrl;
-	
-	public String getIdImagen() {
-		return imagenUrl;
-	}
-
-	public void setIdImagen(String imagenUrl) {
-		this.imagenUrl = imagenUrl;
-	}
 
 	public Integer getIdProducto() {
 		return idProducto;
@@ -73,6 +62,14 @@ public class Producto {
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
+	}
+
+	public String getImagenUrl() {
+		return imagenUrl;
+	}
+
+	public void setImagenUrl(String imagenUrl) {
+		this.imagenUrl = imagenUrl;
 	}	
 	
 }

@@ -1,10 +1,11 @@
 package com.reposteria.service;
 
-import com.reposteria.common.model.Producto;
 import java.util.List;
 
+import com.reposteria.common.model.Producto;
+
 public interface ProductoService {
-	
+
 	Producto obtener(int id);
 	List<Producto> listar();
 	List<Producto> listarXTipoProducto(int tipoProducto);
